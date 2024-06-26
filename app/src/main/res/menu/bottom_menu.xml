@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:title="Home"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/ic_home"
+        android:id="@+id/bottomMenu_Home"
+        />
+    <item
+        android:title="Info"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/ic_info"
+        android:id="@+id/bottomMenu_info"
+        />
+    <item
+        android:title="Settings"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/ic_settings"
+        android:id="@+id/bottomMenu_settings"
+        />
+</menu>

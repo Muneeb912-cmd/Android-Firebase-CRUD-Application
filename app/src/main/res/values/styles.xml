@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="DatePickerStyle" parent="@android:style/Widget.Material.DatePicker">
+        <item name="android:datePickerMode">spinner</item> <!-- Set the mode to spinner for better compatibility -->
+        <item name="android:calendarTextColor">@color/cardview_light_background</item> <!-- Set the text color -->
+    </style>
+
+</resources>
