@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- dialog_edit_item.xml -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    style="@style/ThemeOverlay.Material3.TextInputEditText.OutlinedBox"
+    android:padding="20dp">
+
+    <EditText
+        android:id="@+id/editCardTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="CardTitle"
+        android:maxLines="1"
+        style="@style/ThemeOverlay.Material3.TextInputEditText.OutlinedBox"
+        android:inputType="text" />
+
+    <EditText
+        android:id="@+id/editStartTime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Start Time"
+        android:maxLines="1"
+        style="@style/ThemeOverlay.Material3.TextInputEditText.OutlinedBox"
+        android:inputType="text" />
+
+    <EditText
+    android:id="@+id/editEndTime"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:hint="End Time"
+    android:maxLines="1"
+    style="@style/ThemeOverlay.Material3.TextInputEditText.OutlinedBox"
+    android:inputType="text" />
+    <EditText
+        android:id="@+id/editProgress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Progress"
+        android:maxLines="1"
+        style="@style/ThemeOverlay.Material3.TextInputEditText.OutlinedBox"
+        android:inputType="text" />
+    <EditText
+        android:id="@+id/editImgCaption"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Image Caption"
+        android:maxLines="1"
+        style="@style/ThemeOverlay.Material3.TextInputEditText.OutlinedBox"
+        android:inputType="text" />
+
+
+</LinearLayout>
