@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/theme_mode"
+        android:title="Light Mode"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/baseline_light_mode_24"
+        />
+    <item
+        android:id="@+id/exit_app"
+        android:title="Exit"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/ic_logout"
+        />
+    <item
+        android:id="@+id/toolbar_item1"
+        android:title="Tab Layout"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/baseline_light_mode_24"
+        />
+    <item
+        android:id="@+id/toolbar_item2"
+        android:title="Item 2"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/baseline_light_mode_24"
+        />
+    <item
+        android:id="@+id/toolbar_item3"
+        android:title="Item 3"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/baseline_light_mode_24"
+        />
+</menu>
