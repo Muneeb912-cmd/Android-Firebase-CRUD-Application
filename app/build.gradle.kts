@@ -53,4 +53,5 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     implementation(libs.material3)
     implementation(libs.glide)
+    implementation("com.google.firebase:firebase-storage:21.0.0")
 }

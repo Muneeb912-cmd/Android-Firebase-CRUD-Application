@@ -14,6 +14,7 @@ lifecycleCompiler = "2.8.2"
 firebaseStorageKtx = "21.0.0"
 glide = "4.12.0"
 
+
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }

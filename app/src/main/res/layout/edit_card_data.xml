@@ -1,54 +1,115 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- dialog_edit_item.xml -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    style="@style/ThemeOverlay.Material3.TextInputEditText.OutlinedBox"
-    android:padding="20dp">
-
-    <EditText
-        android:id="@+id/editCardTitle"
+    >
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="CardTitle"
-        android:maxLines="1"
+        android:orientation="vertical"
+        android:scrollbars="vertical"
+        android:scrollbarAlwaysDrawVerticalTrack="true"
         style="@style/ThemeOverlay.Material3.TextInputEditText.OutlinedBox"
-        android:inputType="text" />
+        android:padding="20dp">
 
-    <EditText
-        android:id="@+id/editStartTime"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Start Time"
-        android:maxLines="1"
-        style="@style/ThemeOverlay.Material3.TextInputEditText.OutlinedBox"
-        android:inputType="text" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            >
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:id="@+id/editImage"
+                android:layout_margin="5dp"
+                android:padding="5dp"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="File name"
+                android:textSize="18sp"
+                android:layout_marginLeft="5dp"
+                android:layout_gravity="center_vertical"/>
 
-    <EditText
-    android:id="@+id/editEndTime"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:hint="End Time"
-    android:maxLines="1"
-    style="@style/ThemeOverlay.Material3.TextInputEditText.OutlinedBox"
-    android:inputType="text" />
-    <EditText
-        android:id="@+id/editProgress"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Progress"
-        android:maxLines="1"
-        style="@style/ThemeOverlay.Material3.TextInputEditText.OutlinedBox"
-        android:inputType="text" />
-    <EditText
-        android:id="@+id/editImgCaption"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Image Caption"
-        android:maxLines="1"
-        style="@style/ThemeOverlay.Material3.TextInputEditText.OutlinedBox"
-        android:inputType="text" />
+            <Button
+                android:id="@+id/uploadPic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Chose Image"
+                android:layout_marginStart="10dp"
+                android:layout_gravity="center_vertical"/>
+
+        </LinearLayout>
 
 
-</LinearLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/outlined_text_input_layout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Card Title">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editCardTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/outlined_text_input_layout1"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Start Time">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editStartTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/outlined_text_input_layout2"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="End Time">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editEndTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/outlined_text_input_layout3"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Progress">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editProgress"
+                android:inputType="number"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/outlined_text_input_layout4"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Image Caption">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editImgCaption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+    </LinearLayout>
+</ScrollView>
+
