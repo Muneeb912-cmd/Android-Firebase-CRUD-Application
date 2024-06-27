@@ -1,1 +1,29 @@
-#your JSON code here 
+{
+  "project_info": {
+    "project_number": "211947055883",
+    "project_id": "fir-project-12511",
+    "storage_bucket": "fir-project-12511.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:211947055883:android:46bd5bf3f01dca4f33d00e",
+        "android_client_info": {
+          "package_name": "com.example.week3_challenge"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCm4GwRqCBfmbEODpJRbyya6YLltV7H1k4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

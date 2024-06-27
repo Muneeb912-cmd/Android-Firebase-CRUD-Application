@@ -78,6 +78,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         )
         drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
+
         changeImage = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { result ->

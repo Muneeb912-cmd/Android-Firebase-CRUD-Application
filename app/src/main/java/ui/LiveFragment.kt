@@ -1,8 +1,10 @@
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,13 +21,16 @@ import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.week3_challenge.*
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import kotlin.math.log
 
 class LiveFragment : Fragment(), RecyclerViewAdapter.OnItemClickListener {
 
@@ -33,13 +38,16 @@ class LiveFragment : Fragment(), RecyclerViewAdapter.OnItemClickListener {
     private lateinit var adapter: RecyclerViewAdapter
     private lateinit var recyclerView: RecyclerView
     private var dataList = ArrayList<DataClass>()
-
+    private var selectedImageUri: Uri? = null
+    private lateinit var changeImage: ActivityResultLauncher<Intent>
+    private var currentEditImage: ImageView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val repository = CardDataRepository()
         val factory = CardDataViewModelFactory(repository)
         cardViewModel = ViewModelProvider(this, factory)[CardDataViewModel::class.java]
+
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -60,11 +68,41 @@ class LiveFragment : Fragment(), RecyclerViewAdapter.OnItemClickListener {
                 data?.let {
                     dataList.clear()
                     dataList.addAll(it)
-                    print(it)
                     adapter.notifyDataSetChanged()
                 }
             }
         })
+
+        changeImage = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val data = result.data
+                val imgUri = data?.data
+                selectedImageUri = imgUri
+                currentEditImage?.setImageURI(imgUri)
+                // You might want to store imgUri somewhere for later use
+            }
+        }
+
+        // Set up ItemTouchHelper for swipe functionality
+        val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                return false
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val position = viewHolder.adapterPosition
+                cardViewModel.deleteTask(dataList[position].id)
+                recyclerView.adapter?.notifyItemRemoved(position)
+                Snackbar.make(recyclerView, "Deleted " + dataList[position].cardTitle +" Successfully!", Snackbar.LENGTH_LONG).show()
+            }
+        })
+        itemTouchHelper.attachToRecyclerView(recyclerView)
 
         return view
     }
@@ -146,6 +184,7 @@ class LiveFragment : Fragment(), RecyclerViewAdapter.OnItemClickListener {
 
         // Get the download URL
         storageReference.downloadUrl.addOnSuccessListener { uri ->
+            selectedImageUri=uri
             Glide.with(editImage.context)
                 .load(uri.toString())
                 .into(editImage)
@@ -160,7 +199,7 @@ class LiveFragment : Fragment(), RecyclerViewAdapter.OnItemClickListener {
             editEndTime,
             editProgress,
             editImgCaption,
-            editImage
+            editImage,
         )
 
         // Set positive button (Update)
@@ -171,8 +210,8 @@ class LiveFragment : Fragment(), RecyclerViewAdapter.OnItemClickListener {
                 editEndTime,
                 editProgress,
                 editImgCaption,
-                clickedItem,
-                editImage
+                editImage,
+                clickedItem
             )
         }
 
@@ -180,6 +219,12 @@ class LiveFragment : Fragment(), RecyclerViewAdapter.OnItemClickListener {
         alertDialogBuilder.setNegativeButton("Cancel") { dialog, _ ->
             // Cancel action, do nothing or dismiss dialog
             dialog.dismiss()
+        }
+
+        uploadBtn.setOnClickListener {
+            currentEditImage = editImage // Set the ImageView where the image will be displayed
+            val pickImg = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
+            changeImage.launch(pickImg)
         }
 
         // Show the AlertDialog
@@ -210,28 +255,32 @@ class LiveFragment : Fragment(), RecyclerViewAdapter.OnItemClickListener {
         editEndTime: EditText,
         editProgress: EditText,
         editImgCaption: EditText,
-        clickedItem: DataClass,
-        editImage: ImageView
+        editImage: ImageView,
+        clickedItem: DataClass
     ) {
-        val updatedField1 = editCardTitle.text.toString()
-        val updatedField2 = editStartTime.text.toString()
-        val updatedField3 = editEndTime.text.toString()
-        val updatedField4 = editProgress.text.toString()
-        val updatedField5 = editImgCaption.text.toString()
+        val title = editCardTitle.text.toString()
+        val startTime = editStartTime.text.toString()
+        val endTime = editEndTime.text.toString()
+        val newProgress = editProgress.text.toString()
+        val imgCaption = editImgCaption.text.toString()
+        val id=clickedItem.id
 
-        // Perform update action, e.g., update dataList or show a toast
-        // Update clickedItem with new values
-        clickedItem.cardTitle = updatedField1
-        clickedItem.startTime = updatedField2
-        clickedItem.endTime = updatedField3
-        clickedItem.progress = updatedField4.toInt()
-        clickedItem.imgCaption = updatedField5
+        val dataClass:DataClass=DataClass(
+            imgCaption = imgCaption,
+            imgId = selectedImageUri.toString(),
+            progress = newProgress.toInt(),
+            id = id,
+            startTime = startTime,
+            cardTitle = title,
+            endTime = endTime,
+        )
 
-        Toast.makeText(
-            requireContext(),
-            "${clickedItem.cardTitle} Successfully Updated!",
-            Toast.LENGTH_SHORT
-        ).show()
+        cardViewModel.updateTask(
+            cardData = dataClass,
+            imageUri = selectedImageUri as Uri
+        )
+        Log.d("Value", "onUpdateClick: $id")
+
     }
 
     private fun alertDialogBuilder(clickedItem: DataClass): AlertDialog.Builder {

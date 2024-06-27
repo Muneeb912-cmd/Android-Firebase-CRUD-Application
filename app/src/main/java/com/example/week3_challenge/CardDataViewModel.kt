@@ -13,11 +13,11 @@ class CardDataViewModel(private val repository: CardDataRepository):ViewModel() 
         repository.uploadImageAndAddTask(cardData,imageUri)
     }
 
-    fun updateTask(cardData: DataClass) = viewModelScope.launch {
-        repository.updateTask(cardData)
+    fun updateTask(cardData: DataClass,imageUri: Uri) = viewModelScope.launch {
+        repository.uploadImageAndUpdateTask(cardData,imageUri)
     }
 
     fun deleteTask(taskId: String) = viewModelScope.launch {
-        repository.deleteTask(taskId)
+        repository.delete(taskId)
     }
 }

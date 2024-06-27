@@ -26,8 +26,10 @@ class CardDataRepository {
         cardDataCollection.document(cardData.id).set(cardData)
     }
 
-    fun deleteTask(taskId: String) {
-        cardDataCollection.document(taskId).delete()
+    fun delete(taskId: String) {
+        cardDataCollection.document(taskId).delete().addOnFailureListener{
+            Log.d("Delete", "Error Occured")
+        }
     }
 
     fun getTasks(): LiveData<List<DataClass>> {
@@ -39,7 +41,9 @@ class CardDataRepository {
             }
             val tasks = snapshot.documents.mapNotNull { document ->
                 try {
-                    document.toObject(DataClass::class.java)
+                    val data = document.toObject(DataClass::class.java)
+                    data?.id = document.id
+                    data
                 } catch (e: Exception) {
                     Log.e("Firestore", "Error parsing document ${document.id}", e)
                     null
@@ -59,13 +63,10 @@ class CardDataRepository {
                     addTask(cardData)
                 }
             }
-            .addOnFailureListener {
-                // Handle any errors
-            }
     }
 
     fun uploadImageAndUpdateTask(cardData: DataClass, imageUri: Uri) {
-        val ref = storageReference.child("images/${UUID.randomUUID()}")
+        val ref = storageReference.child("cardImages/${UUID.randomUUID()}")
         ref.putFile(imageUri)
             .addOnSuccessListener {
                 ref.downloadUrl.addOnSuccessListener { uri ->
