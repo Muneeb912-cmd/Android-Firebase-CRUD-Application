@@ -55,19 +55,14 @@ class RecyclerViewAdapter(
 
     override fun onBindViewHolder(holder: ViewHolderClass, position: Int) {
         val currentItem = dataList[position]
-
-        // Create a storage reference from the gs:// URI
         val storageReference: StorageReference = FirebaseStorage.getInstance().getReferenceFromUrl(currentItem.imgId)
-
         // Get the download URL
         storageReference.downloadUrl.addOnSuccessListener { uri ->
-            // Use Glide to load the image from the download URL
             Glide.with(holder.rvImage.context)
                 .load(uri.toString())
                 .into(holder.rvImage)
         }.addOnFailureListener {
-            // Handle any errors
-            holder.rvImage.setImageResource(R.drawable.ic_photo) // Set a placeholder image or handle error
+            holder.rvImage.setImageResource(R.drawable.ic_photo)
         }
 
         holder.rvTitle.text = currentItem.cardTitle

@@ -13,6 +13,7 @@ import android.view.MenuItem
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.TimePicker
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -28,6 +29,9 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -134,8 +138,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         // Access the EditText fields in the dialog layout
         val editCardTitle = dialogView.findViewById<EditText>(R.id.editCardTitle)
-        val editStartTime = dialogView.findViewById<EditText>(R.id.editStartTime)
-        val editEndTime = dialogView.findViewById<EditText>(R.id.editEndTime)
+        val editStartTime = dialogView.findViewById<TimePicker>(R.id.editStartTime)
+        val editEndTime = dialogView.findViewById<TimePicker>(R.id.editEndTime)
         val editProgress = dialogView.findViewById<EditText>(R.id.editProgress)
         val editImgCaption = dialogView.findViewById<EditText>(R.id.editImgCaption)
         val editImage = dialogView.findViewById<ImageView>(R.id.editImage)
@@ -176,24 +180,38 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private fun onCreateClick(
         editImage: ImageView,
         editCardTitle: EditText,
-        editStartTime: EditText,
-        editEndTime: EditText,
+        editStartTime: TimePicker,
+        editEndTime: TimePicker,
         editProgress: EditText,
         editImgCaption: EditText
     ) {
+        // Function to format time
+        fun formatTime(hour: Int, minute: Int): String {
+            val calendar = Calendar.getInstance().apply {
+                set(Calendar.HOUR_OF_DAY, hour)
+                set(Calendar.MINUTE, minute)
+            }
+            val sdf = SimpleDateFormat("hh:mm a", Locale.getDefault()) // 12-hour format with AM/PM
+            return sdf.format(calendar.time)
+        }
+
+        // Extract the time from TimePicker and format it
+        val startTimeFormatted = formatTime(editStartTime.hour, editStartTime.minute)
+        val endTimeFormatted = formatTime(editEndTime.hour, editEndTime.minute)
+
         val dataClass = DataClass(
             cardTitle = editCardTitle.text.toString(),
-            startTime = editStartTime.text.toString(),
-            endTime = editEndTime.text.toString(),
+            startTime = startTimeFormatted,
+            endTime = endTimeFormatted,
             progress = editProgress.text.toString().toInt(),
             imgCaption = editImgCaption.text.toString(),
             imgId = selectedImageUri.toString()
         )
+
         try {
             cardViewModel.addTask(dataClass, imageUri = selectedImageUri as Uri)
-        }catch (e:Exception){
+        } catch (e: Exception) {
             Log.d("Error", "onCreateClick: $e")
         }
-
     }
 }

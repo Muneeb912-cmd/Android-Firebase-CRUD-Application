@@ -13,6 +13,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Spinner
+import android.widget.TimePicker
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -30,6 +31,9 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 import kotlin.math.log
 
 class LiveFragment : Fragment(), RecyclerViewAdapter.OnItemClickListener {
@@ -127,7 +131,6 @@ class LiveFragment : Fragment(), RecyclerViewAdapter.OnItemClickListener {
 
         // Populating tab layout
         val tabsList = timeList()
-
         val tabLayout = view.findViewById<TabLayout>(R.id.tabLayout2)
         for (time in tabsList) {
             val tab = tabLayout.newTab()
@@ -135,16 +138,43 @@ class LiveFragment : Fragment(), RecyclerViewAdapter.OnItemClickListener {
             tabLayout.addTab(tab)
         }
 
+        // Observe filtered data
+        cardViewModel.filteredCardData.observe(viewLifecycleOwner, Observer { data ->
+            dataList.clear()
+            if (data != null) {
+                dataList.addAll(data)
+            }
+            adapter.notifyDataSetChanged()
+        })
+
+        // Setting up tab selection listener
+        tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                tab?.let {
+                    val selectedTabText = it.text.toString()
+                    cardViewModel.filterDataByTime(selectedTabText)
+                }
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab?) {
+                // Optional: handle tab unselected event if needed
+            }
+
+            override fun onTabReselected(tab: TabLayout.Tab?) {
+                // Optional: handle tab reselected event if needed
+            }
+        })
     }
+
 
     private fun timeList(): List<String> {
         val tabsList = listOf(
             "01:00 AM", "02:00 AM", "03:00 AM", "04:00 AM", "05:00 AM",
             "06:00 AM", "07:00 AM", "08:00 AM", "09:00 AM",
-            "10:00 AM", "11:00 AM", "12:00 PM", "13:00 PM",
-            "14:00 PM", "15:00 PM", "16:00 PM", "17:00 PM",
-            "18:00 PM", "19:00 PM", "20:00 PM", "21:00 PM",
-            "22:00 PM", "23:00 PM", "24:00 PM"
+            "10:00 AM", "11:00 AM", "12:00 PM", "01:00 PM",
+            "02:00 PM", "03:00 PM", "04:00 PM", "05:00 PM",
+            "06:00 PM", "07:00 PM", "08:00 PM", "09:00 PM",
+            "10:00 PM", "11:00 PM", "12:00 PM"
         )
         return tabsList
     }
@@ -173,8 +203,8 @@ class LiveFragment : Fragment(), RecyclerViewAdapter.OnItemClickListener {
 
         // Access the EditText fields in the dialog layout
         val editCardTitle = dialogView.findViewById<EditText>(R.id.editCardTitle)
-        val editStartTime = dialogView.findViewById<EditText>(R.id.editStartTime)
-        val editEndTime = dialogView.findViewById<EditText>(R.id.editEndTime)
+        val editStartTime = dialogView.findViewById<TimePicker>(R.id.editStartTime)
+        val editEndTime = dialogView.findViewById<TimePicker>(R.id.editEndTime)
         val editProgress = dialogView.findViewById<EditText>(R.id.editProgress)
         val editImgCaption = dialogView.findViewById<EditText>(R.id.editImgCaption)
         val editImage = dialogView.findViewById<ImageView>(R.id.editImage)
@@ -191,7 +221,7 @@ class LiveFragment : Fragment(), RecyclerViewAdapter.OnItemClickListener {
         }.addOnFailureListener {
             editImage.setImageResource(R.drawable.ic_photo) // Set a placeholder image or handle error
         }
-
+//        currentEditImage = editImage
         populateData(
             editCardTitle,
             clickedItem,
@@ -234,33 +264,57 @@ class LiveFragment : Fragment(), RecyclerViewAdapter.OnItemClickListener {
     private fun populateData(
         editCardTitle: EditText,
         clickedItem: DataClass,
-        editStartTime: EditText,
-        editEndTime: EditText,
+        editStartTime: TimePicker,
+        editEndTime: TimePicker,
         editProgress: EditText,
         editImgCaption: EditText,
         editImage: ImageView
     ) {
         // Populate EditText fields with current data
         editCardTitle.setText(clickedItem.cardTitle)
-        editStartTime.setText(clickedItem.startTime)
-        editEndTime.setText(clickedItem.endTime)
         editProgress.setText(clickedItem.progress.toString())
         editImgCaption.setText(clickedItem.imgCaption)
         editImage.setImageURI(clickedItem.imgId.toUri())
+
+        // Function to set the time on the TimePicker
+        fun setTimePicker(timePicker: TimePicker, time: String) {
+            val sdf = SimpleDateFormat("hh:mm a", Locale.getDefault())
+            val calendar = Calendar.getInstance()
+            calendar.time = sdf.parse(time) ?: return
+
+            timePicker.hour = calendar.get(Calendar.HOUR_OF_DAY)
+            timePicker.minute = calendar.get(Calendar.MINUTE)
+        }
+
+        // Set the start and end times on the TimePickers
+        setTimePicker(editStartTime, clickedItem.startTime)
+        setTimePicker(editEndTime, clickedItem.endTime)
     }
 
     private fun onUpdateClick(
         editCardTitle: EditText,
-        editStartTime: EditText,
-        editEndTime: EditText,
+        editStartTime: TimePicker,
+        editEndTime: TimePicker,
         editProgress: EditText,
         editImgCaption: EditText,
         editImage: ImageView,
         clickedItem: DataClass
     ) {
+        // Function to format time
+        fun formatTime(hour: Int, minute: Int): String {
+            val calendar = Calendar.getInstance().apply {
+                set(Calendar.HOUR_OF_DAY, hour)
+                set(Calendar.MINUTE, minute)
+            }
+            val sdf = SimpleDateFormat("hh:mm a", Locale.getDefault()) // 12-hour format with AM/PM
+            return sdf.format(calendar.time)
+        }
+
+        // Extract the time from TimePicker and format it
+        val startTimeFormatted = formatTime(editStartTime.hour, editStartTime.minute)
+        val endTimeFormatted = formatTime(editEndTime.hour, editEndTime.minute)
+
         val title = editCardTitle.text.toString()
-        val startTime = editStartTime.text.toString()
-        val endTime = editEndTime.text.toString()
         val newProgress = editProgress.text.toString()
         val imgCaption = editImgCaption.text.toString()
         val id=clickedItem.id
@@ -270,9 +324,9 @@ class LiveFragment : Fragment(), RecyclerViewAdapter.OnItemClickListener {
             imgId = selectedImageUri.toString(),
             progress = newProgress.toInt(),
             id = id,
-            startTime = startTime,
+            startTime = startTimeFormatted,
             cardTitle = title,
-            endTime = endTime,
+            endTime = endTimeFormatted,
         )
 
         cardViewModel.updateTask(
@@ -287,7 +341,6 @@ class LiveFragment : Fragment(), RecyclerViewAdapter.OnItemClickListener {
         // Build the AlertDialog
         val alertDialogBuilder = AlertDialog.Builder(requireContext())
         alertDialogBuilder.setTitle("Update ${clickedItem.cardTitle}")
-        alertDialogBuilder.setMessage("Click Action happened on: ${clickedItem.cardTitle}")
         alertDialogBuilder.setIcon(R.drawable.ic_info)
         return alertDialogBuilder
     }

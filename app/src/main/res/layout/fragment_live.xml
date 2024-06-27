@@ -21,7 +21,6 @@
             android:layout_weight="0.7"
             app:layout_constraintEnd_toStartOf="@id/spinner"
             app:layout_constraintStart_toStartOf="parent"
-
             app:layout_constraintTop_toBottomOf="@id/tabLayout"
             app:tabIndicatorColor="@color/tabLayout2_indicator_color"
             app:tabIndicatorFullWidth="true"

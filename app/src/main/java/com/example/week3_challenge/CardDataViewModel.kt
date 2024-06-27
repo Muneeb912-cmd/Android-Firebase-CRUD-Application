@@ -2,22 +2,34 @@ package com.example.week3_challenge
 
 import android.net.Uri
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 
-class CardDataViewModel(private val repository: CardDataRepository):ViewModel() {
+class CardDataViewModel(private val repository: CardDataRepository) : ViewModel() {
+
     val cardData: LiveData<List<DataClass>> = repository.getTasks()
 
-    fun addTask(cardData: DataClass,imageUri: Uri) = viewModelScope.launch {
-        repository.uploadImageAndAddTask(cardData,imageUri)
+    private val _filteredCardData = MutableLiveData<List<DataClass>?>()
+    val filteredCardData: LiveData<List<DataClass>?> get() = _filteredCardData
+
+    fun addTask(cardData: DataClass, imageUri: Uri) = viewModelScope.launch {
+        repository.uploadImageAndAddTask(cardData, imageUri)
     }
 
-    fun updateTask(cardData: DataClass,imageUri: Uri) = viewModelScope.launch {
-        repository.uploadImageAndUpdateTask(cardData,imageUri)
+    fun updateTask(cardData: DataClass, imageUri: Uri) = viewModelScope.launch {
+        repository.uploadImageAndUpdateTask(cardData, imageUri)
     }
 
     fun deleteTask(taskId: String) = viewModelScope.launch {
         repository.delete(taskId)
+    }
+
+    fun filterDataByTime(filterByTime: String) {
+        val filteredList = cardData.value?.filter {
+            it.startTime == filterByTime
+        }
+        _filteredCardData.value = filteredList ?: emptyList()
     }
 }

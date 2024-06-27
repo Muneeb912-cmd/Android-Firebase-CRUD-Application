@@ -78,4 +78,5 @@ class CardDataRepository {
                 // Handle any errors
             }
     }
+
 }
