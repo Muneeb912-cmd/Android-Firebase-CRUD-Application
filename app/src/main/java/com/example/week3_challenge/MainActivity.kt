@@ -1,5 +1,10 @@
 package com.example.week3_challenge
 
+import Adapters.ViewPagerAdapter
+import DataClass.DataClass
+import Models.CardDataRepository
+import ViewModels.CardDataViewModel
+import ViewModels.CardDataViewModelFactory
 import android.app.Activity
 import android.content.Intent
 import android.content.res.Resources
@@ -14,7 +19,6 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TimePicker
-import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -140,7 +144,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val editCardTitle = dialogView.findViewById<EditText>(R.id.editCardTitle)
         val editStartTime = dialogView.findViewById<TimePicker>(R.id.editStartTime)
         val editEndTime = dialogView.findViewById<TimePicker>(R.id.editEndTime)
-        val editProgress = dialogView.findViewById<EditText>(R.id.editProgress)
         val editImgCaption = dialogView.findViewById<EditText>(R.id.editImgCaption)
         val editImage = dialogView.findViewById<ImageView>(R.id.editImage)
         val uploadBtn = dialogView.findViewById<Button>(R.id.uploadPic)
@@ -155,7 +158,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 editCardTitle,
                 editStartTime,
                 editEndTime,
-                editProgress,
                 editImgCaption
             )
         }
@@ -182,7 +184,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         editCardTitle: EditText,
         editStartTime: TimePicker,
         editEndTime: TimePicker,
-        editProgress: EditText,
         editImgCaption: EditText
     ) {
         // Function to format time
@@ -203,7 +204,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             cardTitle = editCardTitle.text.toString(),
             startTime = startTimeFormatted,
             endTime = endTimeFormatted,
-            progress = editProgress.text.toString().toInt(),
             imgCaption = editImgCaption.text.toString(),
             imgId = selectedImageUri.toString()
         )

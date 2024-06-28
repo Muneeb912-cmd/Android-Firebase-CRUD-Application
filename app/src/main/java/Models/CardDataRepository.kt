@@ -1,10 +1,10 @@
-package com.example.week3_challenge
+package Models
 
 import android.net.Uri
-import android.provider.ContactsContract.Data
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import DataClass.DataClass
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import java.util.UUID

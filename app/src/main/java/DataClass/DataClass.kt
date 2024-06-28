@@ -1,4 +1,4 @@
-package com.example.week3_challenge
+package DataClass
 
 import java.util.Date
 
@@ -8,6 +8,5 @@ data class DataClass(
     var endTime: String = "",
     var imgCaption: String = "",
     var imgId: String = "",
-    var progress: Int = 0,
     var startTime: String = ""
 )

@@ -1,5 +1,9 @@
-package com.example.week3_challenge
+package Adapters
 
+import DataClass.DataClass
+import Models.CardDataRepository
+import ViewModels.CardDataViewModel
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -7,10 +11,16 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.week3_challenge.R
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import java.time.Duration
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 
 class RecyclerViewAdapter(
     private val dataList: ArrayList<DataClass>,
@@ -53,6 +63,7 @@ class RecyclerViewAdapter(
         return ViewHolderClass(itemView)
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: ViewHolderClass, position: Int) {
         val currentItem = dataList[position]
         val storageReference: StorageReference = FirebaseStorage.getInstance().getReferenceFromUrl(currentItem.imgId)
@@ -69,10 +80,32 @@ class RecyclerViewAdapter(
         holder.rvImageCaption.text = currentItem.imgCaption
         holder.rvStartTime.text = currentItem.startTime
         holder.rvEndTime.text = currentItem.endTime
-        holder.rvProgress.progress = currentItem.progress
+        holder.rvProgress.progress = progressMonitoring(currentItem)
     }
 
     override fun getItemCount(): Int {
         return dataList.size
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun progressMonitoring(cardData: DataClass): Int {
+        val current = LocalDateTime.now()
+        val timeFormatter = DateTimeFormatter.ofPattern("hh:mm a")
+        val currentTime = current.format(timeFormatter)
+        val startTime = LocalTime.parse(cardData.startTime, timeFormatter)
+        val endTime = LocalTime.parse(cardData.endTime, timeFormatter)
+        val currentLocalTime = LocalTime.parse(currentTime, timeFormatter)
+        val totalDuration = Duration.between(startTime, endTime)
+        val elapsedDuration = Duration.between(startTime, currentLocalTime)
+
+        val progress = if (currentLocalTime.isBefore(startTime)) {
+            0
+        } else if (currentLocalTime.isAfter(endTime)) {
+            100
+        } else {
+            (elapsedDuration.toMillis() * 100 / totalDuration.toMillis()).toInt()
+        }
+
+        return progress
     }
 }

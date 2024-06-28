@@ -1,7 +1,13 @@
+import Adapters.RecyclerViewAdapter
+import DataClass.DataClass
+import Models.CardDataRepository
+import ViewModels.CardDataViewModel
+import ViewModels.CardDataViewModelFactory
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
@@ -17,6 +23,7 @@ import android.widget.TimePicker
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
@@ -34,7 +41,6 @@ import com.google.firebase.storage.StorageReference
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
-import kotlin.math.log
 
 class LiveFragment : Fragment(), RecyclerViewAdapter.OnItemClickListener {
 
@@ -149,6 +155,7 @@ class LiveFragment : Fragment(), RecyclerViewAdapter.OnItemClickListener {
 
         // Setting up tab selection listener
         tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            @RequiresApi(Build.VERSION_CODES.O)
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 tab?.let {
                     val selectedTabText = it.text.toString()
@@ -205,7 +212,6 @@ class LiveFragment : Fragment(), RecyclerViewAdapter.OnItemClickListener {
         val editCardTitle = dialogView.findViewById<EditText>(R.id.editCardTitle)
         val editStartTime = dialogView.findViewById<TimePicker>(R.id.editStartTime)
         val editEndTime = dialogView.findViewById<TimePicker>(R.id.editEndTime)
-        val editProgress = dialogView.findViewById<EditText>(R.id.editProgress)
         val editImgCaption = dialogView.findViewById<EditText>(R.id.editImgCaption)
         val editImage = dialogView.findViewById<ImageView>(R.id.editImage)
         val storageReference: StorageReference =
@@ -227,7 +233,6 @@ class LiveFragment : Fragment(), RecyclerViewAdapter.OnItemClickListener {
             clickedItem,
             editStartTime,
             editEndTime,
-            editProgress,
             editImgCaption,
             editImage,
         )
@@ -238,7 +243,6 @@ class LiveFragment : Fragment(), RecyclerViewAdapter.OnItemClickListener {
                 editCardTitle,
                 editStartTime,
                 editEndTime,
-                editProgress,
                 editImgCaption,
                 editImage,
                 clickedItem
@@ -266,13 +270,11 @@ class LiveFragment : Fragment(), RecyclerViewAdapter.OnItemClickListener {
         clickedItem: DataClass,
         editStartTime: TimePicker,
         editEndTime: TimePicker,
-        editProgress: EditText,
         editImgCaption: EditText,
         editImage: ImageView
     ) {
         // Populate EditText fields with current data
         editCardTitle.setText(clickedItem.cardTitle)
-        editProgress.setText(clickedItem.progress.toString())
         editImgCaption.setText(clickedItem.imgCaption)
         editImage.setImageURI(clickedItem.imgId.toUri())
 
@@ -295,7 +297,6 @@ class LiveFragment : Fragment(), RecyclerViewAdapter.OnItemClickListener {
         editCardTitle: EditText,
         editStartTime: TimePicker,
         editEndTime: TimePicker,
-        editProgress: EditText,
         editImgCaption: EditText,
         editImage: ImageView,
         clickedItem: DataClass
@@ -315,14 +316,12 @@ class LiveFragment : Fragment(), RecyclerViewAdapter.OnItemClickListener {
         val endTimeFormatted = formatTime(editEndTime.hour, editEndTime.minute)
 
         val title = editCardTitle.text.toString()
-        val newProgress = editProgress.text.toString()
         val imgCaption = editImgCaption.text.toString()
         val id=clickedItem.id
 
-        val dataClass:DataClass=DataClass(
+        val dataClass: DataClass = DataClass(
             imgCaption = imgCaption,
             imgId = selectedImageUri.toString(),
-            progress = newProgress.toInt(),
             id = id,
             startTime = startTimeFormatted,
             cardTitle = title,
